@@ -18,12 +18,24 @@
         </ListView>
         <Grid>
             <Button Grid.Column="0"
+                    Grid.Row="0"
+                    Text="Add"
+                    Command="{Binding AddCommand}" />
+            <Button Grid.Column="1"
+                    Grid.Row="0"
+                    Grid.ColumnSpan="2"
+                    Text="Delete Selected"
+                    Command="{Binding DeleteSelectedCommand}" />
+            <Button Grid.Column="0"
+                    Grid.Row="1"
                     Text="Query" 
                     Command="{Binding QueryCommand}"/>
             <Button Grid.Column="1"
+                    Grid.Row="1"
                     Text="Clear"
                     Command="{Binding ClearCommand}" />
             <Button Grid.Column="2"
+                    Grid.Row="1"
                     Text="Edit"
                     Command="{Binding EditCommand}" />
         </Grid>

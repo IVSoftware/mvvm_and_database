@@ -29,6 +29,8 @@ namespace mvvm_and_database
             ClearCommand = new Command(OnClear);
             QueryCommand = new Command(OnQuery); 
             EditCommand = new Command(OnEdit);
+            AddCommand = new Command(OnAdd);
+            DeleteSelectedCommand = new Command(OnDeleteSelected);
 
             makeFreshDatabaseForDemo();
         }
@@ -117,6 +119,37 @@ namespace mvvm_and_database
                 using (var cnx = new SQLiteConnection(mockConnectionString))
                 {
                     cnx.Update(SelectedItem);
+                }
+            }
+        }
+
+        public ICommand AddCommand { get; private set; }
+        private async void OnAdd(object o)
+        {
+            var result = await App.Current.MainPage.DisplayPromptAsync("New Item", "Describe the item");
+            if(!string.IsNullOrWhiteSpace(result))
+            {
+                var newRecord = new Record { Description = result };
+                Recordset.Add(newRecord);
+
+                using (var cnx = new SQLiteConnection(mockConnectionString))
+                {
+                    cnx.Insert(newRecord);
+                }
+            }
+        }
+        public ICommand DeleteSelectedCommand { get; private set; }
+        private void OnDeleteSelected(object o)
+        {
+            if (SelectedItem != null)
+            {
+                var removed = SelectedItem;
+                Recordset.Remove(SelectedItem);
+                // You'll need to decide what kind of UI action merits a SQL
+                // update, but when you're ready to do that here's the command:
+                using (var cnx = new SQLiteConnection(mockConnectionString))
+                {
+                   cnx.Delete(removed);
                 }
             }
         }
