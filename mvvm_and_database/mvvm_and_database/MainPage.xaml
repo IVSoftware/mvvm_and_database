@@ -4,6 +4,10 @@
              x:Class="mvvm_and_database.MainPage">
 
     <StackLayout>
+        <SearchBar x:Name="searchBar"
+                   SearchCommand="{Binding SearchCommand}"
+                   SearchCommandParameter="{Binding Text, Source={x:Reference searchBar}}"
+                   BackgroundColor="#eeeeee"/>
         <ListView ItemsSource="{Binding Recordset}"
                   SelectedItem="{Binding SelectedItem}">
             <ListView.ItemTemplate>

@@ -30,6 +30,8 @@ namespace mvvm_and_database
             QueryCommand = new Command(OnQuery); 
             EditCommand = new Command(OnEdit);
             AddCommand = new Command(OnAdd);
+            SearchCommand = new Command<string>(OnSearch);
+
             DeleteSelectedCommand = new Command(OnDeleteSelected);
 
             makeFreshDatabaseForDemo();
@@ -62,12 +64,12 @@ namespace mvvm_and_database
         }
 
 
-        public ICommand ClearCommand { get; private set; }
+        public ICommand ClearCommand { get;  }
         private void OnClear(object o)
         {
             Recordset.Clear();
         }
-        public ICommand QueryCommand { get; private set; }
+        public ICommand QueryCommand { get;  }
         private void OnQuery(object o)
         {
             Recordset.Clear();
@@ -106,7 +108,7 @@ namespace mvvm_and_database
             }
         }
 
-        public ICommand EditCommand { get; private set; }
+        public ICommand EditCommand { get; }
         private void OnEdit(object o)
         {
             if(SelectedItem != null)
@@ -123,7 +125,7 @@ namespace mvvm_and_database
             }
         }
 
-        public ICommand AddCommand { get; private set; }
+        public ICommand AddCommand { get; }
         private async void OnAdd(object o)
         {
             var result = await App.Current.MainPage.DisplayPromptAsync("New Item", "Describe the item");
@@ -138,7 +140,7 @@ namespace mvvm_and_database
                 }
             }
         }
-        public ICommand DeleteSelectedCommand { get; private set; }
+        public ICommand DeleteSelectedCommand { get; }
         private void OnDeleteSelected(object o)
         {
             if (SelectedItem != null)
@@ -150,6 +152,21 @@ namespace mvvm_and_database
                 using (var cnx = new SQLiteConnection(mockConnectionString))
                 {
                    cnx.Delete(removed);
+                }
+            }
+        }
+
+        public ICommand SearchCommand { get; }
+        private void OnSearch(string expr)
+        {
+            Recordset.Clear();
+            List<Record> queryResult;
+            using (var cnx = new SQLiteConnection(mockConnectionString))
+            {
+                queryResult = cnx.Query<Record>($"SELECT * FROM items WHERE Description LIKE'%{expr}%'");
+                foreach (var record in queryResult)
+                {
+                    Recordset.Add(record);
                 }
             }
         }
